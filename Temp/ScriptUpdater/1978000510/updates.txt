@@ -1,5 +1,0 @@
-Temp/ScriptUpdater/1978000510\1695166333_BreadcrumbDrawer.cs => Library/PackageCache/com.unity.timeline@1.2.17/Editor/Utilities/BreadcrumbDrawer.cs
-Temp/ScriptUpdater/1978000510\1814252995_TimelineWindow_Breadcrumbs.cs => Library/PackageCache/com.unity.timeline@1.2.17/Editor/Window/TimelineWindow_Breadcrumbs.cs
-Temp/ScriptUpdater/1978000510\1977898570_TimelineUtility.cs => Library/PackageCache/com.unity.timeline@1.2.17/Editor/TimelineUtility.cs
-Temp/ScriptUpdater/1978000510\639004582_TimelineWindow_Gui.cs => Library/PackageCache/com.unity.timeline@1.2.17/Editor/Window/TimelineWindow_Gui.cs
-Temp/ScriptUpdater/1978000510\499558211_WindowState.cs => Library/PackageCache/com.unity.timeline@1.2.17/Editor/State/WindowState.cs
