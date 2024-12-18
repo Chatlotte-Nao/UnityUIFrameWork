@@ -24,18 +24,18 @@ public class GeneratorFindComponentTool : Editor
             {
                 Directory.CreateDirectory(GeneratorConfig.FindComponentGeneratorPath);
             }
-
             PresWindowNodeData(obj.transform, obj.name);
-            foreach (var item in objDataList)
+            //生成cs脚本
+            string csContent = CreateCSharpScript(obj.name);
+            string csPath = $"{GeneratorConfig.FindComponentGeneratorPath}/{obj.name}UIComponent.cs";
+            if (File.Exists(csPath))
             {
-                Debug.Log("fieldName"+item.fieldName);
-                Debug.Log("fieldType"+item.fieldType);
+                File.Delete(csPath);
             }
-
-            foreach (var item in objFindPathDic)
-            {
-                Debug.Log("查找路径"+item.Value);
-            }
+            StreamWriter writer = File.CreateText(csPath);
+            writer.Write(csContent);
+            writer.Close();
+            AssetDatabase.Refresh();
         }
         else
         {
@@ -93,7 +93,7 @@ public class GeneratorFindComponentTool : Editor
         }
     }
 
-    public static void CreateCSharpScript(string name)
+    public static string CreateCSharpScript(string name)
     {
         StringBuilder sb = new StringBuilder();
         string nameSpaceName = "UIFrameWork";
@@ -101,11 +101,11 @@ public class GeneratorFindComponentTool : Editor
         sb.AppendLine("/*------------------------");
         sb.AppendLine(" *Title:UI自动化组件查找代生成工具");
         sb.AppendLine(" *Date:" + System.DateTime.Now);
-        sb.AppendLine(" *Description:变量需要以[Text]括号加组件类型的格式进行声明，然后右键窗口物体——一键生成UI组件查找脚本即可");
+        sb.AppendLine(" *Description:变量需要以[Text]括号加组件类型的格式进行声明，然后右键窗口物体一键生成UI组件查找脚本即可");
         sb.AppendLine(" *注意：以下文件是自动生成的，任何手动修改都会被下次生成覆盖，若手动修改后，尽量避免自动生成");
-        sb.AppendLine("/*------------------------");
-        sb.AppendLine("using UnityEngine.UI");
-        sb.AppendLine("using UnityEngine");
+        sb.AppendLine("------------------------*/");
+        sb.AppendLine("using UnityEngine.UI;");
+        sb.AppendLine("using UnityEngine;");
         sb.AppendLine();
         
         //生成命名空间
@@ -122,6 +122,76 @@ public class GeneratorFindComponentTool : Editor
         {
             sb.AppendLine("\t\tpublic  "+item.fieldType+" "+item.fieldName+item.fieldType+";\n");
         }
+        //声明初始化组件接口
+        sb.AppendLine("\t\tpublic  void InitComponent(WindowBase target)");
+        sb.AppendLine("\t\t{");
+        sb.AppendLine("\t\t     //组件查找");
+        //根据查找路径字典 和字段数据列表生成组件查找代码
+        foreach (var item in objFindPathDic)
+        {
+            EditorObjectData itemData = GetEditorObjectData(item.Key);
+            string relFieldName = itemData.fieldName + itemData.fieldType;
+
+            if (string.Equals("GameObject",itemData.fieldType))
+            {
+                sb.AppendLine($"\t\t     {relFieldName} =target.transform.Find(\"{item.Value}\").gameObject;");
+            }
+            else if (string.Equals("Transform",itemData.fieldType))
+            {
+                sb.AppendLine($"\t\t     {relFieldName} =target.transform.Find(\"{item.Value}\").transform;");
+            }
+            else
+            {
+                sb.AppendLine($"\t\t     {relFieldName} =target.transform.Find(\"{item.Value}\").GetComponent<{itemData.fieldType}>();");
+            }
+        }
+        sb.AppendLine("\t");
+        sb.AppendLine("\t");
+        sb.AppendLine("\t\t     //组件事件绑定");
+        //得到逻辑类 WindowBase => LoginWindow
+        sb.AppendLine($"\t\t     {name} mWindow=({name})target;");
+
+        //生成UI事件绑定代码
+        foreach (var item in objDataList)
+        {
+            string type = item.fieldType;
+            string methodName = item.fieldName;
+            string suffix = "";
+            if (type.Contains("Button"))
+            {
+                suffix = "Click";
+                sb.AppendLine($"\t\t     target.AddButtonClickListener({methodName}{type},mWindow.On{methodName}Button{suffix});");
+            }
+            if (type.Contains("InputField"))
+            {
+                sb.AppendLine($"\t\t     target.AddInputFieldListener({methodName}{type},mWindow.On{methodName}InputChange,mWindow.On{methodName}InputEnd);");
+            }
+            if (type.Contains("Toggle"))
+            {
+                suffix = "Change";
+                sb.AppendLine($"\t\t     target.AddToggleClickListener({methodName}{type},mWindow.On{methodName}Toggle{suffix});");
+            }
+        }
+        sb.AppendLine("\t\t}");
+        sb.AppendLine("\t}");
+        if (!string.IsNullOrEmpty(nameSpaceName))
+        {
+            sb.AppendLine("}");
+        }
+        return sb.ToString();
+        
+    }
+    
+    public static EditorObjectData GetEditorObjectData(int insid)
+    {
+        foreach (var item in objDataList)
+        {
+            if (item.insId==insid)
+            {
+                return item;
+            }
+        }
+        return null;
     }
 }
 
