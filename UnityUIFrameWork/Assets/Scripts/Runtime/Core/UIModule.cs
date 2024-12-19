@@ -122,7 +122,7 @@ public class UIModule
         return null;
     }
 
-    private void HideWindow(string windowName)
+    public void HideWindow(string windowName)
     {
         WindowBase window = GetWindow(windowName);
         HideWindow(window);

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 public class GeneratorFindComponentTool : Editor
 {
@@ -25,6 +26,9 @@ public class GeneratorFindComponentTool : Editor
                 Directory.CreateDirectory(GeneratorConfig.FindComponentGeneratorPath);
             }
             PresWindowNodeData(obj.transform, obj.name);
+            //储存字段名称
+            string datalistJson = JsonConvert.SerializeObject(objDataList);
+            PlayerPrefs.SetString(GeneratorConfig.OBJDATALIST_KEY, datalistJson);
             //生成cs脚本
             string csContent = CreateCSharpScript(obj.name);
             string csPath = $"{GeneratorConfig.FindComponentGeneratorPath}/{obj.name}UIComponent.cs";

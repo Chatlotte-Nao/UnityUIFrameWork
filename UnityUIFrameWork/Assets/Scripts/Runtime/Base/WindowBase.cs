@@ -55,6 +55,11 @@ public class WindowBase : WindowBehaviour
     }
     #endregion
 
+    public void HideWindow()
+    {
+        UIModule.Instance.HideWindow(Name);
+    }
+    
     public override void SetVisible(bool isVisble)
     {
         gameObject.SetActive(isVisble);//TempCode
