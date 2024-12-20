@@ -32,17 +32,7 @@ public class GeneratorWindowTool : Editor
 
         Debug.Log("CsConent:\n" + csContnet);
         string cspath = GeneratorConfig.WindowGeneratorPath + "/" + obj.name + ".cs";
-        //UIWindowEditor.ShowWindow(csContnet, cspath, methodDic);
-        ////生成脚本文件
-        if (File.Exists(cspath))
-        {
-            File.Delete(cspath);
-        }
-        StreamWriter writer = File.CreateText(cspath);
-        writer.Write(csContnet);
-        writer.Close();
-        AssetDatabase.Refresh();
-        Debug.Log("cspath:" + cspath);
+        UIWindowEditor.Showindow(csContnet, cspath, methodDic);
     }
 
     /// <summary>

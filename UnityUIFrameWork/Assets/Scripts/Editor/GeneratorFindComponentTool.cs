@@ -124,10 +124,10 @@ public class GeneratorFindComponentTool : Editor
         //根据字段数据列表 声明字段
         foreach (var item in objDataList)
         {
-            sb.AppendLine("\t\tpublic  "+item.fieldType+" "+item.fieldName+item.fieldType+";\n");
+            sb.AppendLine("\t\tpublic "+item.fieldType+" "+item.fieldName+item.fieldType+";\n");
         }
         //声明初始化组件接口
-        sb.AppendLine("\t\tpublic  void InitComponent(WindowBase target)");
+        sb.AppendLine("\t\tpublic void InitComponent(WindowBase target)");
         sb.AppendLine("\t\t{");
         sb.AppendLine("\t\t     //组件查找");
         //根据查找路径字典 和字段数据列表生成组件查找代码
