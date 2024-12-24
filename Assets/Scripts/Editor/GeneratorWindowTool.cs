@@ -1,25 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
+using System.Linq;
+using System.IO;
+using Newtonsoft.Json;
+using System.Text;
 
 public class GeneratorWindowTool : Editor
 {
-    static Dictionary<string, string> methodDic = new Dictionary<string, string>();
 
+    static Dictionary<string, string> methodDic = new Dictionary<string, string>();
     [MenuItem("GameObject/生成Window脚本(Shift+V) #V", false, 0)]
     static void CreateFindComponentScripts()
     {
-        GameObject obj = Selection.objects.First() as GameObject; //获取到当前选择的物体
+        GameObject obj = Selection.objects.First() as GameObject;//获取到当前选择的物体
         if (obj == null)
         {
             Debug.LogError("需要选择 GameObject");
             return;
         }
+
 
         //设置脚本生成路径
         if (!Directory.Exists(GeneratorConfig.WindowGeneratorPath))
@@ -32,9 +33,8 @@ public class GeneratorWindowTool : Editor
 
         Debug.Log("CsConent:\n" + csContnet);
         string cspath = GeneratorConfig.WindowGeneratorPath + "/" + obj.name + ".cs";
-        UIWindowEditor.Showindow(csContnet, cspath, methodDic);
+        UIWindowEditor.ShowWindow(csContnet, cspath, methodDic);
     }
-
     /// <summary>
     /// 生成Window脚本
     /// </summary>
@@ -58,37 +58,36 @@ public class GeneratorWindowTool : Editor
         sb.AppendLine("using UnityEngine.UI;");
         sb.AppendLine("using UnityEngine;");
         sb.AppendLine("using UIFrameWork;");
-        sb.AppendLine();
 
         //生成类命
         sb.AppendLine($"public class {name}:WindowBase");
         sb.AppendLine("{");
-        sb.AppendLine("");
-        // if (GeneratorConfig.GeneratorType == GeneratorType.Bind)
-        // {
-        //     //生成字段
-        //     sb.AppendLine($"\t\t public {name}DataComponent dataCompt;");
-        // }
-        //else
+        //sb.AppendLine("t");
+        if (GeneratorConfig.GeneratorType == GeneratorType.Bind)
         {
             //生成字段
-            sb.AppendLine($"\t public {name}UIComponent uiComponent=new {name}UIComponent();");
+            sb.AppendLine($"\t public {name}DataComponent dataCompt;");
+        }
+        else
+        {
+            //生成字段
+            sb.AppendLine($"\t public {name}UIComponent uiCompt=new {name}UIComponent();");
         }
 
-        //生成声明周期函数 Awake
-        sb.AppendLine("");
-        sb.AppendLine($"\t #region 声明周期函数");
+
+        //生成生命周期函数 Awake
+        sb.AppendLine("\t");
+        sb.AppendLine($"\t #region 生命周期函数");
         sb.AppendLine($"\t //调用机制与Mono Awake一致");
         sb.AppendLine("\t public override void OnAwake()");
         sb.AppendLine("\t {");
-        // if (GeneratorConfig.GeneratorType == GeneratorType.Bind)
-        // {
-        //     sb.AppendLine($"\t\t\t dataCompt=gameObject.GetComponent<{name}DataComponent>();");
-        //     sb.AppendLine($"\t\t\t dataCompt.InitComponent(this);");
-        // }
-        //else
-            sb.AppendLine($"\t\t uiComponent.InitComponent(this);");
-
+        if (GeneratorConfig.GeneratorType == GeneratorType.Bind)
+        {
+            sb.AppendLine($"\t\t dataCompt=gameObject.GetComponent<{name}DataComponent>();");
+            sb.AppendLine($"\t\t dataCompt.InitComponent(this);");
+        }
+        else
+            sb.AppendLine($"\t\t uiCompt.InitComponent(this);");
         sb.AppendLine("\t\t base.OnAwake();");
         sb.AppendLine("\t }");
         //OnShow
@@ -113,8 +112,8 @@ public class GeneratorWindowTool : Editor
 
         sb.AppendLine($"\t #endregion");
 
-        //业务方法
-        sb.AppendLine($"\t #region 业务方法");
+        //API Function 
+        sb.AppendLine($"\t #region API Function");
         sb.AppendLine($"\t    ");
         sb.AppendLine($"\t #endregion");
 
@@ -146,10 +145,9 @@ public class GeneratorWindowTool : Editor
 
         sb.AppendLine($"\t #endregion");
 
-        sb.AppendLine("}");
+        sb.AppendLine("\t}");
         return sb.ToString();
     }
-
     /// <summary>
     /// 生成UI事件方法
     /// </summary>
@@ -157,18 +155,15 @@ public class GeneratorWindowTool : Editor
     /// <param name="methodDic"></param>
     /// <param name="modthName"></param>
     /// <param name="param"></param>
-    public static void CreateMethod(StringBuilder sb, ref Dictionary<string, string> methodDic, string methodName,
-        string param = "")
+    public static void CreateMethod(StringBuilder sb, ref Dictionary<string, string> methodDic, string methodName, string param = "")
     {
         //声明UI组件事件
         sb.AppendLine($"\t public void {methodName}({param})");
         sb.AppendLine("\t {");
-        sb.Append("\t");
         if (methodName == "OnCloseButtonClick")
         {
-            sb.AppendLine("\tHideWindow();");
+            sb.AppendLine("\t\tHideWindow();");
         }
-
         sb.AppendLine("\t }");
 
         //存储UI组件事件 提供给后续新增代码使用
