@@ -1,6 +1,6 @@
 /*---------------------------------
  *Title:UI表现层脚本自动化生成工具
- *Date:2024/12/24 9:03:34
+ *Date:2024/12/25 8:58:57
  *Description:UI 表现层，该层只负责界面的交互、表现相关的更新，不允许编写任何业务逻辑代码
  *注意:以下文件是自动生成的，再次生成不会覆盖原有的代码，会在原有的代码上进行新增，可放心使用
 ---------------------------------*/
@@ -18,7 +18,6 @@ public class TempWindow:WindowBase
 		 dataCompt=gameObject.GetComponent<TempWindowDataComponent>();
 		 dataCompt.InitComponent(this);
 		 base.OnAwake();
-		 Debug.Log(1);
 	 }
 	 //物体显示时执行
 	 public override void OnShow()
@@ -38,13 +37,17 @@ public class TempWindow:WindowBase
 	 #endregion
 	 #region API Function
 
-	 public void Test()
+	 public void TEst()
 	 {
 		 
 	 }
 	 #endregion
 	 #region UI组件事件
-	 public void OnCloseButtonClick()
+	 	 public void OnCloButtonClick()
+	 {
+	
+	 }
+		public void OnCloseButtonClick()
 	 {
 		HideWindow();
 	 }

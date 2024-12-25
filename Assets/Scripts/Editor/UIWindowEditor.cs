@@ -20,17 +20,26 @@ public class UIWindowEditor : EditorWindow
         window.scriptContent = content;
         window.filePath = filePath;
         //处理代码新增
-        if (File.Exists(filePath) && insterDic != null)
+        if (File.Exists(filePath))
         {
             //获取原始代码
             string originScript = File.ReadAllText(filePath);
-            foreach (var item in insterDic)
+            if (insterDic != null)
             {
-                //如果老代码中没有这个代码就进行插入操作
-                if (!originScript.Contains(item.Key))
+                bool isInsert=false;
+                foreach (var item in insterDic)
                 {
-                    int index = window.GetInsertIndex(originScript);
-                    originScript= window.scriptContent = originScript.Insert(index, item.Value + "\t\t");
+                    //如果老代码中没有这个代码就进行插入操作
+                    if (!originScript.Contains(item.Key))
+                    {
+                        int index = window.GetInsertIndex(originScript);
+                        originScript=window.scriptContent = originScript.Insert(index, item.Value + "\t\t");
+                        isInsert = true;
+                    }
+                }
+                if (!isInsert)
+                {
+                    window.scriptContent = originScript;
                 }
             }
         }
