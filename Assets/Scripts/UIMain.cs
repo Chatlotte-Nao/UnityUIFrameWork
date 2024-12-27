@@ -7,7 +7,9 @@ public class UIMain : MonoBehaviour
     
     void Start()
     {
-        
+
+        UIModule.Instance.Initialize();
+        UIModule.Instance.PopUpWindow<LoginWindow>();
     }
 
     

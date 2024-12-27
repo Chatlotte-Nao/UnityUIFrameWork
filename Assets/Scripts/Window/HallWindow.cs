@@ -1,21 +1,21 @@
 /*---------------------------------
  *Title:UI表现层脚本自动化生成工具
- *Date:2024/12/27 8:46:56
+ *Date:2024/12/27 8:42:52
  *Description:UI 表现层，该层只负责界面的交互、表现相关的更新，不允许编写任何业务逻辑代码
  *注意:以下文件是自动生成的，再次生成不会覆盖原有的代码，会在原有的代码上进行新增，可放心使用
 ---------------------------------*/
 using UnityEngine.UI;
 using UnityEngine;
 using UIFrameWork;
-public class LoginWindow:WindowBase
+public class HallWindow:WindowBase
 {
-	 public LoginWindowDataComponent dataCompt;
+	 public HallWindowDataComponent dataCompt;
 	
 	 #region 生命周期函数
 	 //调用机制与Mono Awake一致
 	 public override void OnAwake()
 	 {
-		 dataCompt=gameObject.GetComponent<LoginWindowDataComponent>();
+		 dataCompt=gameObject.GetComponent<HallWindowDataComponent>();
 		 dataCompt.InitComponent(this);
 		 base.OnAwake();
 	 }
@@ -39,9 +39,17 @@ public class LoginWindow:WindowBase
 	    
 	 #endregion
 	 #region UI组件事件
-	 public void OnLoginButtonClick()
+	 public void OnChatButtonClick()
 	 {
-		 UIModule.Instance.PopUpWindow<HallWindow>();
+	 }
+	 public void OnSettingButtonClick()
+	 {
+	 }
+	 public void OnUserInfoButtonClick()
+	 {
+	 }
+	 public void OnFriendButtonClick()
+	 {
 	 }
 	 #endregion
 	}
