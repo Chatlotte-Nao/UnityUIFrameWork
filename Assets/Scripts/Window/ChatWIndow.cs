@@ -1,21 +1,21 @@
 /*---------------------------------
  *Title:UI表现层脚本自动化生成工具
- *Date:2024/12/27 8:42:52
+ *Date:2025/01/05 18:51:50
  *Description:UI 表现层，该层只负责界面的交互、表现相关的更新，不允许编写任何业务逻辑代码
  *注意:以下文件是自动生成的，再次生成不会覆盖原有的代码，会在原有的代码上进行新增，可放心使用
 ---------------------------------*/
 using UnityEngine.UI;
 using UnityEngine;
 using UIFrameWork;
-public class HallWindow:WindowBase
+public class ChatWIndow:WindowBase
 {
-	 public HallWindowDataComponent dataCompt;
+	 public ChatWIndowDataComponent dataCompt;
 	
 	 #region 生命周期函数
 	 //调用机制与Mono Awake一致
 	 public override void OnAwake()
 	 {
-		 dataCompt=gameObject.GetComponent<HallWindowDataComponent>();
+		 dataCompt=gameObject.GetComponent<ChatWIndowDataComponent>();
 		 dataCompt.InitComponent(this);
 		 base.OnAwake();
 	 }
@@ -23,9 +23,6 @@ public class HallWindow:WindowBase
 	 public override void OnShow()
 	 {
 		 base.OnShow();
-		 UIModule.Instance.PushAndPopStackWindow<UserInfoWIndow>();
-		 UIModule.Instance.PushAndPopStackWindow<SettingWIndow>();
-		 UIModule.Instance.PushAndPopStackWindow<ChatWIndow>();
 	 }
 	 //物体隐藏时执行
 	 public override void OnHide()
@@ -42,17 +39,9 @@ public class HallWindow:WindowBase
 	    
 	 #endregion
 	 #region UI组件事件
-	 public void OnChatButtonClick()
+	 public void OnCloseButtonClick()
 	 {
-	 }
-	 public void OnSettingButtonClick()
-	 {
-	 }
-	 public void OnUserInfoButtonClick()
-	 {
-	 }
-	 public void OnFriendButtonClick()
-	 {
+		HideWindow();
 	 }
 	 #endregion
 	}

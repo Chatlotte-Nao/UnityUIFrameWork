@@ -289,6 +289,14 @@ public class UIModule
         mStartPopStackWndStatus = true;//已经开始进行堆栈弹出的流程，
         PopStackWindow();
     }
+    /// <summary>
+    /// 压入并且弹出堆栈弹窗
+    /// </summary>
+    public void PushAndPopStackWindow<T>(Action<WindowBase> popCallBack = null) where T : WindowBase, new()
+    {
+        PushWindowToStack<T>(popCallBack);
+        StartPopFirstStackWindow();
+    }
     
     /// <summary>
     /// 弹出堆栈弹窗
@@ -310,6 +318,11 @@ public class UIModule
             mStartPopStackWndStatus = false;
             return false;
         }
+    }
+
+    public void ClearStackWindow()
+    {
+        mWindowStack.Clear();
     }
     
     /// <summary>
