@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -13,6 +14,7 @@ public class WindowBase : WindowBehaviour
 
     private CanvasGroup mUIMask;
     protected Transform mUIContent;
+    protected bool mDisableAnim = false;
     /// <summary>
     /// 初始化基类组件
     /// </summary>
@@ -32,6 +34,7 @@ public class WindowBase : WindowBehaviour
     public override void OnShow()
     {
         base.OnShow();
+        ShowAnimation();
     }
         
     public override void OnUpdate()
@@ -55,9 +58,32 @@ public class WindowBase : WindowBehaviour
     }
     #endregion
 
+    #region 动画管理
+
+    public void ShowAnimation()
+    {
+        //基础弹窗不需要动画
+        if (Canvas.sortingOrder > 90 && mDisableAnim==false)
+        {
+            mUIContent.localScale = Vector3.one * 0.8f;
+            mUIContent.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+        }
+    }
+
+    public void HideAnimation()
+    {
+        mUIContent.DOScale(Vector3.one * 1.1f, 0.2f).SetEase(Ease.OutBack).OnComplete(() =>
+        {       
+            UIModule.Instance.HideWindow(Name);
+        });
+    }
+
+    #endregion
+
     public void HideWindow()
     {
-        UIModule.Instance.HideWindow(Name);
+        //UIModule.Instance.HideWindow(Name);
+        HideAnimation();
     }
     
     public override void SetVisible(bool isVisble)

@@ -41,6 +41,33 @@ public class UIModule
     }
 
     #region 窗口管理
+
+    public void PreLoadWindow<T>() where T : WindowBase, new()
+    {
+        Type type = typeof(T);
+        string windowName = type.Name;
+        T windowBase = new T();
+        GameObject newWindow = TempLoadWindow(windowName);
+        if (newWindow != null)
+        {
+            windowBase.gameObject = newWindow;
+            windowBase.transform = newWindow.transform;
+            windowBase.Canvas = newWindow.GetComponent<Canvas>();
+            windowBase.Canvas.worldCamera = mUICamera;
+            windowBase.transform.SetAsLastSibling();
+            windowBase.Name = newWindow.name;
+            windowBase.OnAwake();
+            windowBase.SetVisible(false);
+            RectTransform rectTrans = newWindow.GetComponent<RectTransform>();
+            rectTrans.anchorMax=Vector2.one;
+            rectTrans.offsetMax = Vector2.zero;
+            rectTrans.offsetMin=Vector2.zero;
+            mAllWindowDic.Add(windowName,windowBase);
+            mAllWindowList.Add(windowBase);
+        }
+        Debug.Log("预加载窗口 窗口名字:"+windowName);
+    }
+    
     public T PopUpWindow<T>() where T: WindowBase,new ()
     {
         Type type = typeof(T);
