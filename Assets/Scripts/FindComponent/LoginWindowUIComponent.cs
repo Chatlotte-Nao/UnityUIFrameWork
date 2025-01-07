@@ -16,7 +16,7 @@ namespace UIFrameWork
 		public void InitComponent(WindowBase target)
 		{
 		     //组件查找
-		     LoginButton =target.transform.Find("UIContent/[Button]Login").GetComponent<Button>();
+		     LoginButton =target.Transform.Find("UIContent/[Button]Login").GetComponent<Button>();
 	
 	
 		     //组件事件绑定

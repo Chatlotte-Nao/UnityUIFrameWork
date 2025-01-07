@@ -15,7 +15,7 @@ public class ChatWIndow:WindowBase
 	 //调用机制与Mono Awake一致
 	 public override void OnAwake()
 	 {
-		 dataCompt=gameObject.GetComponent<ChatWIndowDataComponent>();
+		 dataCompt=GameObject.GetComponent<ChatWIndowDataComponent>();
 		 dataCompt.InitComponent(this);
 		 base.OnAwake();
 	 }

@@ -22,10 +22,10 @@ namespace UIFrameWork
 		public void InitComponent(WindowBase target)
 		{
 		     //组件查找
-		     ChatButton =target.transform.Find("UIContent/[Button]Chat").GetComponent<Button>();
-		     SettingButton =target.transform.Find("UIContent/[Button]Setting").GetComponent<Button>();
-		     UserInfoButton =target.transform.Find("UIContent/[Button]UserInfo").GetComponent<Button>();
-		     FriendButton =target.transform.Find("UIContent/[Button]Friend").GetComponent<Button>();
+		     ChatButton =target.Transform.Find("UIContent/[Button]Chat").GetComponent<Button>();
+		     SettingButton =target.Transform.Find("UIContent/[Button]Setting").GetComponent<Button>();
+		     UserInfoButton =target.Transform.Find("UIContent/[Button]UserInfo").GetComponent<Button>();
+		     FriendButton =target.Transform.Find("UIContent/[Button]Friend").GetComponent<Button>();
 	
 	
 		     //组件事件绑定

@@ -50,11 +50,11 @@ public class UIModule
         GameObject newWindow = TempLoadWindow(windowName);
         if (newWindow != null)
         {
-            windowBase.gameObject = newWindow;
-            windowBase.transform = newWindow.transform;
+            windowBase.GameObject = newWindow;
+            windowBase.Transform = newWindow.transform;
             windowBase.Canvas = newWindow.GetComponent<Canvas>();
             windowBase.Canvas.worldCamera = mUICamera;
-            windowBase.transform.SetAsLastSibling();
+            windowBase.Transform.SetAsLastSibling();
             windowBase.Name = newWindow.name;
             windowBase.OnAwake();
             windowBase.SetVisible(false);
@@ -99,11 +99,11 @@ public class UIModule
         GameObject newWindow = TempLoadWindow(windowName);
         if (newWindow != null)
         {
-            windowBase.gameObject = newWindow;
-            windowBase.transform = newWindow.transform;
+            windowBase.GameObject = newWindow;
+            windowBase.Transform = newWindow.transform;
             windowBase.Canvas = newWindow.GetComponent<Canvas>();
             windowBase.Canvas.worldCamera = mUICamera;
-            windowBase.transform.SetAsLastSibling();
+            windowBase.Transform.SetAsLastSibling();
             windowBase.Name = newWindow.name;
             windowBase.OnAwake();
             windowBase.SetVisible(true);
@@ -129,10 +129,10 @@ public class UIModule
         {
             WindowBase window = null;
             window = mAllWindowDic[windowName];
-            if (window.gameObject != null && window.Visible == false)
+            if (window.GameObject != null && window.Visible == false)
             {
                 mVisibleWindowList.Add(window);
-                window.transform.SetAsLastSibling();
+                window.Transform.SetAsLastSibling();
                 window.SetVisible(true);
                 SetWindowMaskVisible();
                 window.OnShow();
@@ -219,7 +219,7 @@ public class UIModule
             SetWindowMaskVisible();
             window.OnHide();
             window.OnDestroy();
-            Object.Destroy(window.gameObject);
+            Object.Destroy(window.GameObject);
             //在出栈的情况下，上一个界面隐藏时，自动打开栈种的下一个界面
             PopNextStackWindow(window);
         }
@@ -251,7 +251,7 @@ public class UIModule
             for (int i = 0; i < mVisibleWindowList.Count; i++)
             {
                 WindowBase window = mVisibleWindowList[i];
-                if (window != null && window.gameObject != null)
+                if (window != null && window.GameObject != null)
                 {
                     int windowSortingOrder = window.Canvas.sortingOrder;
                     window.SetMaskVisible(false);
@@ -259,7 +259,7 @@ public class UIModule
                     {
                         maxOrderWindowBase = window;
                         maxOrder = windowSortingOrder;
-                        maxIndex = window.transform.GetSiblingIndex();
+                        maxIndex = window.Transform.GetSiblingIndex();
                     }
                     else
                     {
@@ -269,10 +269,10 @@ public class UIModule
                             maxOrderWindowBase = window;
                             maxOrder = windowSortingOrder;
                         }
-                        else if (maxOrder == windowSortingOrder && maxIndex<window.transform.GetSiblingIndex())
+                        else if (maxOrder == windowSortingOrder && maxIndex<window.Transform.GetSiblingIndex())
                         {
                             maxOrderWindowBase = window;
-                            maxIndex = window.transform.GetSiblingIndex();
+                            maxIndex = window.Transform.GetSiblingIndex();
                         }
                     }
                 }
@@ -285,7 +285,7 @@ public class UIModule
         }
     }
     
-    public GameObject TempLoadWindow(string windowName)
+    private GameObject TempLoadWindow(string windowName)
     {
         GameObject window = Object.Instantiate(Resources.Load<GameObject>(mWindowConfig.GetWindowPath(windowName)), mUIRoot, true);
         window.transform.localScale=Vector3.one;
@@ -335,7 +335,7 @@ public class UIModule
             WindowBase window = mWindowStack.Dequeue();
             WindowBase popWindow= PopUpWindow(window);
             popWindow.PopStackListener = window.PopStackListener;
-            popWindow.PopStack = true;
+            popWindow.IsPopStack = true;
             popWindow.PopStackListener?.Invoke(popWindow);
             popWindow.PopStackListener = null;
             return true;
@@ -357,9 +357,9 @@ public class UIModule
     /// </summary>
     private void PopNextStackWindow(WindowBase windowBase)
     {
-        if (windowBase != null && mStartPopStackWndStatus && windowBase.PopStack)
+        if (windowBase != null && mStartPopStackWndStatus && windowBase.IsPopStack)
         {
-            windowBase.PopStack = false;
+            windowBase.IsPopStack = false;
             PopStackWindow();
         }
     }

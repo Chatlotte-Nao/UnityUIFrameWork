@@ -15,7 +15,7 @@ public class SettingWIndow:WindowBase
 	 //调用机制与Mono Awake一致
 	 public override void OnAwake()
 	 {
-		 dataCompt=gameObject.GetComponent<SettingWIndowDataComponent>();
+		 dataCompt=GameObject.GetComponent<SettingWIndowDataComponent>();
 		 dataCompt.InitComponent(this);
 		 base.OnAwake();
 	 }

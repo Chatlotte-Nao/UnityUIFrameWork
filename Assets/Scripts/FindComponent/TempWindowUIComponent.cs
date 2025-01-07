@@ -26,12 +26,12 @@ namespace UIFrameWork
 		public void InitComponent(WindowBase target)
 		{
 		     //组件查找
-		     CloseButton =target.transform.Find("UIContent/[Button]Close").GetComponent<Button>();
-		     toggleToggle =target.transform.Find("UIContent/[Toggle]toggle").GetComponent<Toggle>();
-		     imgImage =target.transform.Find("UIContent/[Image]img").GetComponent<Image>();
-		     img14Image =target.transform.Find("UIContent/[Image]img14").GetComponent<Image>();
-		     iwqeImage =target.transform.Find("UIContent/[Image]iwqe").GetComponent<Image>();
-		     CloButton =target.transform.Find("UIContent/[Button]Clo").GetComponent<Button>();
+		     CloseButton =target.Transform.Find("UIContent/[Button]Close").GetComponent<Button>();
+		     toggleToggle =target.Transform.Find("UIContent/[Toggle]toggle").GetComponent<Toggle>();
+		     imgImage =target.Transform.Find("UIContent/[Image]img").GetComponent<Image>();
+		     img14Image =target.Transform.Find("UIContent/[Image]img14").GetComponent<Image>();
+		     iwqeImage =target.Transform.Find("UIContent/[Image]iwqe").GetComponent<Image>();
+		     CloButton =target.Transform.Find("UIContent/[Button]Clo").GetComponent<Button>();
 	
 	
 		     //组件事件绑定

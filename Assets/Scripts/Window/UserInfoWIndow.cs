@@ -15,7 +15,7 @@ public class UserInfoWIndow:WindowBase
 	 //调用机制与Mono Awake一致
 	 public override void OnAwake()
 	 {
-		 dataCompt=gameObject.GetComponent<UserInfoWIndowDataComponent>();
+		 dataCompt=GameObject.GetComponent<UserInfoWIndowDataComponent>();
 		 dataCompt.InitComponent(this);
 		 base.OnAwake();
 	 }

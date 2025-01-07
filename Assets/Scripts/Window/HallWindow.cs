@@ -15,7 +15,7 @@ public class HallWindow:WindowBase
 	 //调用机制与Mono Awake一致
 	 public override void OnAwake()
 	 {
-		 dataCompt=gameObject.GetComponent<HallWindowDataComponent>();
+		 dataCompt=GameObject.GetComponent<HallWindowDataComponent>();
 		 dataCompt.InitComponent(this);
 		 base.OnAwake();
 	 }

@@ -16,7 +16,7 @@ namespace UIFrameWork
 		public void InitComponent(WindowBase target)
 		{
 		     //组件查找
-		     CloseButton =target.transform.Find("UIContent/[Button]Close").GetComponent<Button>();
+		     CloseButton =target.Transform.Find("UIContent/[Button]Close").GetComponent<Button>();
 	
 	
 		     //组件事件绑定

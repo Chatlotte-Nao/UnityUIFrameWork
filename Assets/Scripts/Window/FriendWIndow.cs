@@ -15,7 +15,7 @@ public class FriendWIndow:WindowBase
 	 //调用机制与Mono Awake一致
 	 public override void OnAwake()
 	 {
-		 dataCompt=gameObject.GetComponent<FriendWIndowDataComponent>();
+		 dataCompt=GameObject.GetComponent<FriendWIndowDataComponent>();
 		 dataCompt.InitComponent(this);
 		 base.OnAwake();
 	 }

@@ -8,22 +8,22 @@ using UnityEngine.UI;
 
 public class WindowBase : WindowBehaviour
 {
-    private List<Button> mAllButtonList = new List<Button>();
-    private List<Toggle> mToggleList = new List<Toggle>();
-    private List<InputField> mInputList = new List<InputField>();
+    private List<Button> _allButtonList = new List<Button>();
+    private List<Toggle> _toggleList = new List<Toggle>();
+    private List<InputField> _inputFieldList = new List<InputField>();
 
-    private CanvasGroup mUIMask;
-    private CanvasGroup mCanvasGroup;
-    protected Transform mUIContent;
-    protected bool mDisableAnim = false;
+    private CanvasGroup _uiMask;
+    private CanvasGroup _canvasGroup;
+    protected Transform _uiContent;
+    protected bool IsDisableAnim = false;
     /// <summary>
     /// 初始化基类组件
     /// </summary>
     private void InitializeBaseComponent()
     {
-        mUIMask = transform.Find("UIMask").GetComponent<CanvasGroup>();
-        mUIContent = transform.Find("UIContent");
-        mCanvasGroup=transform.GetComponent<CanvasGroup>();
+        _uiMask = Transform.Find("UIMask").GetComponent<CanvasGroup>();
+        _uiContent = Transform.Find("UIContent");
+        _canvasGroup=Transform.GetComponent<CanvasGroup>();
     }
     
     #region 生命周期
@@ -55,7 +55,7 @@ public class WindowBase : WindowBehaviour
         RemoveAllButtonListener();
         RemoveAllToggleListener();
         RemoveAllInputListener();
-        mAllButtonList.Clear();
+        _allButtonList.Clear();
         
     }
     #endregion
@@ -65,16 +65,16 @@ public class WindowBase : WindowBehaviour
     public void ShowAnimation()
     {
         //基础弹窗不需要动画
-        if (Canvas.sortingOrder > 90 && mDisableAnim==false)
+        if (Canvas.sortingOrder > 90 && IsDisableAnim==false)
         {
-            mUIContent.localScale = Vector3.one * 0.8f;
-            mUIContent.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+            _uiContent.localScale = Vector3.one * 0.8f;
+            _uiContent.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
         }
     }
 
     public void HideAnimation()
     {
-        mUIContent.DOScale(Vector3.one * 1.1f, 0.2f).SetEase(Ease.OutBack).OnComplete(() =>
+        _uiContent.DOScale(Vector3.one * 1.1f, 0.2f).SetEase(Ease.OutBack).OnComplete(() =>
         {       
             UIModule.Instance.HideWindow(Name);
         });
@@ -88,18 +88,18 @@ public class WindowBase : WindowBehaviour
         HideAnimation();
     }
     
-    public override void SetVisible(bool isVisble)
+    public override void SetVisible(bool isVisible)
     {
-        mCanvasGroup.alpha = isVisble ? 1 : 0;
-        mCanvasGroup.blocksRaycasts = isVisble;
-        Visible = isVisble;
+        _canvasGroup.alpha = isVisible ? 1 : 0;
+        _canvasGroup.blocksRaycasts = isVisible;
+        Visible = isVisible;
     }
 
     public void SetMaskVisible(bool isVisble)
     {
         if (UISetting.Instance.SINGMASK_SYSTEM)
         {
-            mUIMask.alpha = isVisble ? 1 : 0;
+            _uiMask.alpha = isVisble ? 1 : 0;
         }
     }
 
@@ -109,9 +109,9 @@ public class WindowBase : WindowBehaviour
     {
         if (btn != null)
         {
-            if (!mAllButtonList.Contains(btn))
+            if (!_allButtonList.Contains(btn))
             {
-                mAllButtonList.Add(btn);
+                _allButtonList.Add(btn);
             }
             btn.onClick.RemoveAllListeners();
             btn.onClick.AddListener(action);
@@ -122,9 +122,9 @@ public class WindowBase : WindowBehaviour
     {
         if (toggle != null)
         {
-            if (!mToggleList.Contains(toggle))
+            if (!_toggleList.Contains(toggle))
             {
-                mToggleList.Add(toggle);
+                _toggleList.Add(toggle);
             }
             toggle.onValueChanged.RemoveAllListeners();
             toggle.onValueChanged.AddListener((isOn =>
@@ -138,9 +138,9 @@ public class WindowBase : WindowBehaviour
     {
         if (input != null)
         {
-            if (!mInputList.Contains(input))
+            if (!_inputFieldList.Contains(input))
             {
-                mInputList.Add(input);    
+                _inputFieldList.Add(input);    
             }
             input.onValueChanged.RemoveAllListeners();
             input.onEndEdit.RemoveAllListeners();
@@ -151,7 +151,7 @@ public class WindowBase : WindowBehaviour
 
     public void RemoveAllButtonListener()
     {
-        foreach (var item in mAllButtonList)
+        foreach (var item in _allButtonList)
         {
             item.onClick.RemoveAllListeners();
         }
@@ -159,7 +159,7 @@ public class WindowBase : WindowBehaviour
     
     public void RemoveAllToggleListener()
     {
-        foreach (var item in mToggleList)
+        foreach (var item in _toggleList)
         {
             item.onValueChanged.RemoveAllListeners();
         }
@@ -167,7 +167,7 @@ public class WindowBase : WindowBehaviour
     
     public void RemoveAllInputListener()
     {
-        foreach (var item in mInputList)
+        foreach (var item in _inputFieldList)
         {
             item.onValueChanged.RemoveAllListeners();
             item.onEndEdit.RemoveAllListeners();
