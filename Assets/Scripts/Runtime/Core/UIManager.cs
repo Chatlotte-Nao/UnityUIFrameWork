@@ -5,55 +5,57 @@ using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-public class UIModule
+public class UIManager
 {
-    private static UIModule _instance;
-    public static UIModule Instance
+    private static UIManager _instance;
+    public static UIManager Instance
     {
         get
         {
             if (_instance == null)
             {
-                _instance = new UIModule();
+                _instance = new UIManager();
             }
             return _instance;
         }
     }
 
-    private Camera mUICamera;
-    private Transform mUIRoot;
-    private Dictionary<string, WindowBase> mAllWindowDic = new Dictionary<string, WindowBase>();
-    private List<WindowBase> mAllWindowList = new List<WindowBase>();
-    private List<WindowBase> mVisibleWindowList = new List<WindowBase>();//所有可见窗口列表
-    private WindowConfig mWindowConfig;
+    private Camera _uiCamera;
+    private Transform _uiRoot;
+    private Dictionary<string, WindowBase> _allWindowDic = new Dictionary<string, WindowBase>();
+    private List<WindowBase> _allWindowList = new List<WindowBase>();
+    private List<WindowBase> _visibleWindowList = new List<WindowBase>();//所有可见窗口列表
+    private WindowConfig _windowConfig;
 
-    private Queue<WindowBase> mWindowStack = new Queue<WindowBase>();//队列，可以用来管理弹窗的循环弹出
-    private bool mStartPopStackWndStatus = false; //开始弹出堆栈的标志，可以用来处理多种情况，比如正在出栈中有其他界面弹出，可以直接放到栈内进行弹出等
+    private Queue<WindowBase> _windowStack = new Queue<WindowBase>();//队列，可以用来管理弹窗的循环弹出
+    private bool _startPopStackWindowStatus = false; //开始弹出堆栈的标志，可以用来处理多种情况，比如正在出栈中有其他界面弹出，可以直接放到栈内进行弹出等
 
     public void Initialize()
     {
-        mUICamera = GameObject.Find("UICamera").GetComponent<Camera>();
-        mUIRoot = GameObject.Find("UIRoot").transform;
-        mWindowConfig = Resources.Load<WindowConfig>("WindowConfig");
+        _uiCamera = GameObject.Find("UICamera").GetComponent<Camera>();
+        _uiRoot = GameObject.Find("UIRoot").transform;
+        _windowConfig = Resources.Load<WindowConfig>("WindowConfig");
 #if UNITY_EDITOR
-        mWindowConfig.GeneratorWindowConfig();
+        _windowConfig.GeneratorWindowConfig();
 #endif
     }
 
     #region 窗口管理
-
+    /// <summary>
+    /// 预加载界面 
+    /// </summary>
     public void PreLoadWindow<T>() where T : WindowBase, new()
     {
         Type type = typeof(T);
         string windowName = type.Name;
         T windowBase = new T();
-        GameObject newWindow = TempLoadWindow(windowName);
+        GameObject newWindow = InstantiateWindow(windowName);
         if (newWindow != null)
         {
             windowBase.GameObject = newWindow;
             windowBase.Transform = newWindow.transform;
             windowBase.Canvas = newWindow.GetComponent<Canvas>();
-            windowBase.Canvas.worldCamera = mUICamera;
+            windowBase.Canvas.worldCamera = _uiCamera;
             windowBase.Transform.SetAsLastSibling();
             windowBase.Name = newWindow.name;
             windowBase.OnAwake();
@@ -62,27 +64,29 @@ public class UIModule
             rectTrans.anchorMax=Vector2.one;
             rectTrans.offsetMax = Vector2.zero;
             rectTrans.offsetMin=Vector2.zero;
-            mAllWindowDic.Add(windowName,windowBase);
-            mAllWindowList.Add(windowBase);
+            _allWindowDic.Add(windowName,windowBase);
+            _allWindowList.Add(windowBase);
         }
         Debug.Log("预加载窗口 窗口名字:"+windowName);
     }
-    
-    public T PopUpWindow<T>() where T: WindowBase,new ()
+
+    public T OpenWindow<T>() where T: WindowBase,new ()
     {
         Type type = typeof(T);
         string windowName = type.Name;
         WindowBase window = GetWindow(windowName);
         if (window != null)
         { 
-          return  ShowWindow(windowName) as T;
+          return ShowWindow(windowName) as T;
         }
 
         T t = new T();
         return InitializeWindow(t, windowName) as T;
     }
-    
-    public WindowBase PopUpWindow(WindowBase window)
+    /// <summary>
+    /// 用于打开界面
+    /// </summary>
+    public WindowBase OpenWindow(WindowBase window)
     {
         Type type = window.GetType();
         string windowName = type.Name;
@@ -93,16 +97,16 @@ public class UIModule
         }
         return InitializeWindow(window, windowName);
     }
-
+    //初始化界面
     private WindowBase InitializeWindow(WindowBase windowBase, string windowName)
     {
-        GameObject newWindow = TempLoadWindow(windowName);
+        GameObject newWindow = InstantiateWindow(windowName);
         if (newWindow != null)
         {
             windowBase.GameObject = newWindow;
             windowBase.Transform = newWindow.transform;
             windowBase.Canvas = newWindow.GetComponent<Canvas>();
-            windowBase.Canvas.worldCamera = mUICamera;
+            windowBase.Canvas.worldCamera = _uiCamera;
             windowBase.Transform.SetAsLastSibling();
             windowBase.Name = newWindow.name;
             windowBase.OnAwake();
@@ -112,9 +116,9 @@ public class UIModule
             rectTrans.anchorMax=Vector2.one;
             rectTrans.offsetMax = Vector2.zero;
             rectTrans.offsetMin=Vector2.zero;
-            mAllWindowDic.Add(windowName,windowBase);
-            mAllWindowList.Add(windowBase);
-            mVisibleWindowList.Add(windowBase);
+            _allWindowDic.Add(windowName,windowBase);
+            _allWindowList.Add(windowBase);
+            _visibleWindowList.Add(windowBase);
             SetWindowMaskVisible();
             return windowBase;
         }
@@ -122,16 +126,16 @@ public class UIModule
         Debug.LogError("没有加载到对应窗口 窗口名字:"+windowName);
         return null;
     }
-
+    //显示界面(类似于把gameObject SetActive(true)这样)
     private WindowBase ShowWindow(string windowName)
     {
-        if (mAllWindowDic.ContainsKey(windowName))
+        if (_allWindowDic.ContainsKey(windowName))
         {
             WindowBase window = null;
-            window = mAllWindowDic[windowName];
+            window = _allWindowDic[windowName];
             if (window.GameObject != null && window.Visible == false)
             {
-                mVisibleWindowList.Add(window);
+                _visibleWindowList.Add(window);
                 window.Transform.SetAsLastSibling();
                 window.SetVisible(true);
                 SetWindowMaskVisible();
@@ -148,18 +152,18 @@ public class UIModule
 
     private WindowBase GetWindow(string windowName)
     {
-        if (mAllWindowDic.ContainsKey(windowName))
+        if (_allWindowDic.ContainsKey(windowName))
         {
-            return mAllWindowDic[windowName];
+            return _allWindowDic[windowName];
         }
 
         return null;
     }
-
+    
     public T GetWindow<T>() where T : WindowBase
     {
         Type type = typeof(T);
-        foreach (var item in mVisibleWindowList)
+        foreach (var item in _visibleWindowList)
         {
             if (item.Name == type.Name)
             {
@@ -169,7 +173,9 @@ public class UIModule
         Debug.LogError("该窗口没有获取到:"+type.Name);
         return null;
     }
-
+    /// <summary>
+    /// 隐藏界面(类似于把gameObject SetActive(false)这样)
+    /// </summary>
     public void HideWindow(string windowName)
     {
         WindowBase window = GetWindow(windowName);
@@ -185,7 +191,7 @@ public class UIModule
     {
         if (window != null && window.Visible)
         {
-            mVisibleWindowList.Remove(window);
+            _visibleWindowList.Remove(window);
             window.SetVisible(false);
             SetWindowMaskVisible();
             window.OnHide();
@@ -204,32 +210,34 @@ public class UIModule
     {
         DestroyWindow(typeof(T).Name);
     }
-
+    //销毁界面
     private void DestroyWindow(WindowBase window)
     {
         if (window != null)
         {
-            if (mAllWindowDic.ContainsKey(window.Name))
+            if (_allWindowDic.ContainsKey(window.Name))
             {
-                mAllWindowDic.Remove(window.Name);
-                mAllWindowList.Remove(window);
-                mVisibleWindowList.Remove(window);
+                _allWindowDic.Remove(window.Name);
+                _allWindowList.Remove(window);
+                _visibleWindowList.Remove(window);
             }
             window.SetVisible(false);
             SetWindowMaskVisible();
             window.OnHide();
             window.OnDestroy();
             Object.Destroy(window.GameObject);
-            //在出栈的情况下，上一个界面隐藏时，自动打开栈种的下一个界面
+            //在出栈的情况下，上一个界面隐藏时，自动打开栈中的下一个界面
             PopNextStackWindow(window);
         }
     }
-
+    /// <summary>
+    /// 销毁所有界面
+    /// </summary>
     public void DestroyAllWindow(List<string> filterlist = null)
     {
-        for (int i = mAllWindowList.Count-1; i >=0; i--)
+        for (int i = _allWindowList.Count-1; i >=0; i--)
         {
-            WindowBase window = mAllWindowList[i];
+            WindowBase window = _allWindowList[i];
             if (window == null || (filterlist != null && filterlist.Contains(window.Name)))
             {
                 continue;
@@ -248,9 +256,9 @@ public class UIModule
             int maxIndex = 0;//最大排序下标，在相同父节点下的位置下标
             //关闭所有窗口的Mask 设置为不可见
             //从所有可见窗口中找到一个层级最大的窗口，把Mask设置为可见
-            for (int i = 0; i < mVisibleWindowList.Count; i++)
+            for (int i = 0; i < _visibleWindowList.Count; i++)
             {
-                WindowBase window = mVisibleWindowList[i];
+                WindowBase window = _visibleWindowList[i];
                 if (window != null && window.GameObject != null)
                 {
                     int windowSortingOrder = window.Canvas.sortingOrder;
@@ -284,10 +292,10 @@ public class UIModule
             }
         }
     }
-    
-    private GameObject TempLoadWindow(string windowName)
+    //实例化界面预制体
+    private GameObject InstantiateWindow(string windowName)
     {
-        GameObject window = Object.Instantiate(Resources.Load<GameObject>(mWindowConfig.GetWindowPath(windowName)), mUIRoot, true);
+        GameObject window = Object.Instantiate(Resources.Load<GameObject>(_windowConfig.GetWindowPath(windowName)), _uiRoot, true);
         window.transform.localScale=Vector3.one;
         window.transform.localPosition=Vector3.zero;
         window.transform.rotation=Quaternion.identity;
@@ -305,15 +313,15 @@ public class UIModule
     {
         T windowBase = new T();
         windowBase.PopStackListener = popCallBack;
-        mWindowStack.Enqueue(windowBase);
+        _windowStack.Enqueue(windowBase);
     }
     /// <summary>
     /// 弹出堆栈中第一个弹窗
     /// </summary>
     public void StartPopFirstStackWindow()
     {
-        if (mStartPopStackWndStatus) return;
-        mStartPopStackWndStatus = true;//已经开始进行堆栈弹出的流程，
+        if (_startPopStackWindowStatus) return;
+        _startPopStackWindowStatus = true;//已经开始进行堆栈弹出的流程，
         PopStackWindow();
     }
     /// <summary>
@@ -330,26 +338,23 @@ public class UIModule
     /// </summary>
     public bool PopStackWindow()
     {
-        if (mWindowStack.Count>0)
+        if (_windowStack.Count>0)
         {
-            WindowBase window = mWindowStack.Dequeue();
-            WindowBase popWindow= PopUpWindow(window);
+            WindowBase window = _windowStack.Dequeue();
+            WindowBase popWindow= OpenWindow(window);
             popWindow.PopStackListener = window.PopStackListener;
-            popWindow.IsPopStack = true;
+            popWindow.IsPopStackWindow = true;
             popWindow.PopStackListener?.Invoke(popWindow);
             popWindow.PopStackListener = null;
             return true;
         }
-        else
-        {
-            mStartPopStackWndStatus = false;
-            return false;
-        }
+        _startPopStackWindowStatus = false;
+        return false;
     }
 
     public void ClearStackWindow()
     {
-        mWindowStack.Clear();
+        _windowStack.Clear();
     }
     
     /// <summary>
@@ -357,9 +362,9 @@ public class UIModule
     /// </summary>
     private void PopNextStackWindow(WindowBase windowBase)
     {
-        if (windowBase != null && mStartPopStackWndStatus && windowBase.IsPopStack)
+        if (windowBase != null && _startPopStackWindowStatus && windowBase.IsPopStackWindow)
         {
-            windowBase.IsPopStack = false;
+            windowBase.IsPopStackWindow = false;
             PopStackWindow();
         }
     }

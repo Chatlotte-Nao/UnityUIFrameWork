@@ -9,11 +9,11 @@ public class UIMain : MonoBehaviour
     void Start()
     {
 
-        UIModule.Instance.Initialize();
-        UIModule.Instance.PopUpWindow<LoginWindow>();
-        UIModule.Instance.PreLoadWindow<UserInfoWIndow>();
-        UIModule.Instance.PreLoadWindow<SettingWIndow>();
-        UIModule.Instance.PreLoadWindow<ChatWIndow>();
+        UIManager.Instance.Initialize();
+        UIManager.Instance.OpenWindow<LoginWindow>();
+        UIManager.Instance.PreLoadWindow<UserInfoWIndow>();
+        UIManager.Instance.PreLoadWindow<SettingWIndow>();
+        UIManager.Instance.PreLoadWindow<ChatWIndow>();
     }
 
     
@@ -22,12 +22,12 @@ public class UIMain : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             Debug.Log("UserinfoWindow");
-            UIModule.Instance.PushAndPopStackWindow<UserInfoWIndow>();
+            UIManager.Instance.PushAndPopStackWindow<UserInfoWIndow>();
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
             Debug.Log("SettingWindow");
-            UIModule.Instance.PushAndPopStackWindow<SettingWIndow>();
+            UIManager.Instance.PushAndPopStackWindow<SettingWIndow>();
         }
     }
 }

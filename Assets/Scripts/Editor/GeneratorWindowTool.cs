@@ -52,7 +52,6 @@ public class GeneratorWindowTool : Editor
         sb.AppendLine("/*---------------------------------");
         sb.AppendLine(" *Title:UI表现层脚本自动化生成工具");
         sb.AppendLine(" *Date:" + System.DateTime.Now);
-        sb.AppendLine(" *Description:UI 表现层，该层只负责界面的交互、表现相关的更新，不允许编写任何业务逻辑代码");
         sb.AppendLine(" *注意:以下文件是自动生成的，再次生成不会覆盖原有的代码，会在原有的代码上进行新增，可放心使用");
         sb.AppendLine("---------------------------------*/");
         sb.AppendLine("using UnityEngine.UI;");

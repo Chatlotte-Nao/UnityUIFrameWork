@@ -28,7 +28,7 @@ public class WindowBehaviour
     /// <summary>
     /// 是否是通过堆栈系统弹出的界面
     /// </summary>
-    public bool IsPopStack { get; set; }
+    public bool IsPopStackWindow { get; set; }
     /// <summary>
     /// PopStack监听器
     /// </summary>

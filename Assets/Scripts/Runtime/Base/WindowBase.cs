@@ -76,7 +76,7 @@ public class WindowBase : WindowBehaviour
     {
         _uiContent.DOScale(Vector3.one * 1.1f, 0.2f).SetEase(Ease.OutBack).OnComplete(() =>
         {       
-            UIModule.Instance.HideWindow(Name);
+            UIManager.Instance.HideWindow(Name);
         });
     }
 

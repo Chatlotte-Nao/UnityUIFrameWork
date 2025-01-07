@@ -41,7 +41,7 @@ public class LoginWindow:WindowBase
 	 #region UI组件事件
 	 public void OnLoginButtonClick()
 	 {
-		 UIModule.Instance.PopUpWindow<HallWindow>();
+		 UIManager.Instance.OpenWindow<HallWindow>();
 	 }
 	 #endregion
 	}

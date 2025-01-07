@@ -45,7 +45,7 @@ public class UserInfoWIndow:WindowBase
 	 }
 	 public void OnFriendButtonClick()
 	 {
-		 UIModule.Instance.PopUpWindow<FriendWIndow>();
+		 UIManager.Instance.OpenWindow<FriendWIndow>();
 	 }
 	 #endregion
 	}
