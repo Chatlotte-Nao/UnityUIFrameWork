@@ -13,6 +13,7 @@ public class WindowBase : WindowBehaviour
     private List<InputField> mInputList = new List<InputField>();
 
     private CanvasGroup mUIMask;
+    private CanvasGroup mCanvasGroup;
     protected Transform mUIContent;
     protected bool mDisableAnim = false;
     /// <summary>
@@ -22,6 +23,7 @@ public class WindowBase : WindowBehaviour
     {
         mUIMask = transform.Find("UIMask").GetComponent<CanvasGroup>();
         mUIContent = transform.Find("UIContent");
+        mCanvasGroup=transform.GetComponent<CanvasGroup>();
     }
     
     #region 生命周期
@@ -88,7 +90,8 @@ public class WindowBase : WindowBehaviour
     
     public override void SetVisible(bool isVisble)
     {
-        gameObject.SetActive(isVisble);//TempCode
+        mCanvasGroup.alpha = isVisble ? 1 : 0;
+        mCanvasGroup.blocksRaycasts = isVisble;
         Visible = isVisble;
     }
 
