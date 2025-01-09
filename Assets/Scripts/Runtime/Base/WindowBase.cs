@@ -12,7 +12,7 @@ public class WindowBase : WindowBehaviour
     private List<Toggle> _toggleList = new List<Toggle>();
     private List<InputField> _inputFieldList = new List<InputField>();
 
-    private CanvasGroup _uiMask;
+    private CanvasGroup _uiMaskCanvasGroup;
     private CanvasGroup _canvasGroup;
     protected Transform _uiContent;
     protected bool IsDisableAnim = false;
@@ -21,7 +21,7 @@ public class WindowBase : WindowBehaviour
     /// </summary>
     private void InitializeBaseComponent()
     {
-        _uiMask = Transform.Find("UIMask").GetComponent<CanvasGroup>();
+        _uiMaskCanvasGroup = Transform.Find("UIMask").GetComponent<CanvasGroup>();
         _uiContent = Transform.Find("UIContent");
         _canvasGroup=Transform.GetComponent<CanvasGroup>();
     }
@@ -99,8 +99,19 @@ public class WindowBase : WindowBehaviour
     {
         if (UISetting.Instance.SINGMASK_SYSTEM)
         {
-            _uiMask.alpha = isVisble ? 1 : 0;
+            _uiMaskCanvasGroup.alpha = isVisble ? 1 : 0;
         }
+    }
+    
+    /// <summary>
+    /// 伪隐藏触发接口
+    /// </summary>
+    /// <param name="value"></param>
+    public virtual void PseudoHidden(int value)
+    {
+        _uiMaskCanvasGroup.alpha = _canvasGroup.alpha = value;
+        _uiMaskCanvasGroup.interactable = _canvasGroup.interactable = value == 1 ? true : false;
+        _uiMaskCanvasGroup.blocksRaycasts = _canvasGroup.blocksRaycasts = value == 1 ? true : false;
     }
 
     #region 事件管理

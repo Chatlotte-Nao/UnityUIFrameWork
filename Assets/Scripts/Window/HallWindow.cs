@@ -23,9 +23,6 @@ public class HallWindow:WindowBase
 	 public override void OnShow()
 	 {
 		 base.OnShow();
-		 UIManager.Instance.PushAndPopStackWindow<UserInfoWIndow>();
-		 UIManager.Instance.PushAndPopStackWindow<SettingWIndow>();
-		 UIManager.Instance.PushAndPopStackWindow<ChatWIndow>();
 	 }
 	 //物体隐藏时执行
 	 public override void OnHide()

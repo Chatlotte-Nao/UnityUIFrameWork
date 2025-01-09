@@ -11,9 +11,6 @@ public class UIMain : MonoBehaviour
 
         UIManager.Instance.Initialize();
         UIManager.Instance.OpenWindow<LoginWindow>();
-        UIManager.Instance.PreLoadWindow<UserInfoWIndow>();
-        UIManager.Instance.PreLoadWindow<SettingWIndow>();
-        UIManager.Instance.PreLoadWindow<ChatWIndow>();
     }
 
     

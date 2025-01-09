@@ -30,6 +30,23 @@ public class UIManager
     private Queue<WindowBase> _windowStack = new Queue<WindowBase>();//队列，可以用来管理弹窗的循环弹出
     private bool _startPopStackWindowStatus = false; //开始弹出堆栈的标志，可以用来处理多种情况，比如正在出栈中有其他界面弹出，可以直接放到栈内进行弹出等
 
+    #region 智能显隐
+    private bool mSmartShowHide=true;
+    //智能显隐开关（可根据情况选择开启或关闭）
+    //智能显隐：主要用来优化窗口叠加时被遮挡的窗口参与渲染计算，导致帧率降低的问题。
+    //显隐规则：由程序设定某个窗口是否为全屏窗口。(全屏窗口设定方式：在窗口的OnAwake接口中设定该窗口是否为全屏窗口如 FullScreenWindow=true)
+    //1.智能隐藏:当FullScreenWindow=true的全屏窗口打开时，框架会自动通过伪隐藏的方式隐藏所有被当前全屏窗口遮挡住的窗口，避免这些看不到的窗口参与渲染运算，
+    //从而提高性能。
+    //2.智能显示：当FullScreenWindow=true的全屏窗口关闭时，框架会自动找到上一个伪隐藏的窗口把其设置为可见状态，若上一个窗口为非全屏窗口，框架则会找上上个窗口进行显示，
+    //以此类推进行循环，直到找到全屏窗口则停止智能显示流程。
+    //注意：通过智能显隐进行伪隐藏的窗口在逻辑上仍属于显示中的窗口，可以通过GetWindow获取到该窗口。但是在表现上该窗口为不可见窗口，故称之为伪隐藏。
+    //智能显隐逻辑与（打开当前窗口时隐藏其他所有窗口相似）但本质上有非常大的区别，
+    //1.通过智能显隐设置为不可见的窗口属于伪隐藏窗口，在逻辑上属于显示中的窗口。
+    //2.通过智能显隐设置为不可见的窗口可以通过关闭当前窗口，自动恢复当前窗口之前的窗口的显示。
+    //3.通过智能显隐设置为不可见的窗口不会触发UGUI重绘、不会参与渲染计算、不会影响帧率。
+    //4.程序只需要通过FullScreenWindow=true配置那些窗口为全屏窗口即可，智能显隐的所有逻辑均有框架自动维护处理。
+    #endregion
+    
     public void Initialize()
     {
         _uiCamera = GameObject.Find("UICamera").GetComponent<Camera>();
@@ -370,5 +387,79 @@ public class UIManager
     }
     
     #endregion
+
+    #region 智能显隐
+    private void ShowWindowAndModifyAllWindowCanvasGroup(WindowBase window, int value)
+    {
+        if (!mSmartShowHide)
+        {
+            return;
+        }
+
+        //if (WorldManager.IsHallWorld && window.FullScreenWindow) 可以以此种方式决定智能显隐开启场景
+        if (window.FullScreenWindow)
+        {
+            try
+            {
+                //当显示的弹窗是大厅是，不对其他弹窗进行伪隐藏，
+                if (string.Equals(window.Name, "HallWindow"))
+                {
+                    return;
+                }
+
+                if (_visibleWindowList.Count > 1)
+                {
+                    //处理先弹弹窗 后关弹窗的情况
+                    WindowBase curShowBase = _visibleWindowList[_visibleWindowList.Count - 2];
+                    if (!curShowBase.FullScreenWindow && window.Canvas.sortingOrder < curShowBase.Canvas.sortingOrder)
+                    {
+                        return;
+                    }
+                }
+
+                for (int i = _visibleWindowList.Count - 1; i >= 0; i--)
+                {
+                    WindowBase item = _visibleWindowList[i];
+                    if (item.Name != window.Name)
+                    {
+                        item.PseudoHidden(value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Error:" + ex);
+            }
+        }
+    }
+
+    private void HideWindowAndModifyAllWindowCanvasGroup(WindowBase window, int value)
+    {
+        if (!mSmartShowHide)
+        {
+            return;
+        }
+
+        //if (WorldManager.IsHallWorld && window.FullScreenWindow) 可以以此种方式决定智能显隐开启场景
+        if (window.FullScreenWindow)
+        {
+            for (int i = _visibleWindowList.Count - 1; i >= 0; i--)
+            {
+                if (i >= 0 && _visibleWindowList[i] != window)
+                {
+                    _visibleWindowList[i].PseudoHidden(1);
+                    //找到上一个窗口，如果是全屏窗口，将其设置可见，终止循转。否则循环至最终
+                    if (_visibleWindowList[i].FullScreenWindow)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    #endregion
+    
+
 }
 

@@ -33,6 +33,11 @@ public class WindowBehaviour
     /// PopStack监听器
     /// </summary>
     public Action<WindowBase> PopStackListener { get; set; }
+    /// <summary>
+    /// 全屏窗口标志(在窗口Awake接口中进行设置,智能显隐开启后当全屏弹窗弹出时，被遮挡的窗口都会通过伪隐藏隐藏掉，从而提升性能)
+    /// </summary>
+    public bool FullScreenWindow { get; set; }
+    
     //下面的方法都同Unity生命周期一样执行规则
     public virtual void OnAwake(){}
     
