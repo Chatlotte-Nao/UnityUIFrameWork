@@ -19,12 +19,17 @@ public class UIMain : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             Debug.Log("UserinfoWindow");
-            UIManager.Instance.PushAndPopStackWindow<UserInfoWIndow>();
+            UIManager.Instance.OpenWindow<UserInfoWIndow>();
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
             Debug.Log("SettingWindow");
-            UIManager.Instance.PushAndPopStackWindow<SettingWIndow>();
+            UIManager.Instance.OpenWindow<SettingWIndow>();
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            Debug.Log("SettingWindow");
+            UIManager.Instance.OpenWindow<HallWindow>();
         }
     }
 }

@@ -137,6 +137,7 @@ public class UIManager
             _allWindowList.Add(windowBase);
             _visibleWindowList.Add(windowBase);
             SetWindowMaskVisible();
+            ShowWindowAndModifyAllWindowCanvasGroup(windowBase, 0);
             return windowBase;
         }
         
@@ -156,6 +157,7 @@ public class UIManager
                 window.Transform.SetAsLastSibling();
                 window.SetVisible(true);
                 SetWindowMaskVisible();
+                ShowWindowAndModifyAllWindowCanvasGroup(window, 0);
                 window.OnShow();
             }
             return window;

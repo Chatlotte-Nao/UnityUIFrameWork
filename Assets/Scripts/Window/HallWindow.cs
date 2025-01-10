@@ -17,6 +17,7 @@ public class HallWindow:WindowBase
 	 {
 		 dataCompt=GameObject.GetComponent<HallWindowDataComponent>();
 		 dataCompt.InitComponent(this);
+		 FullScreenWindow = true;
 		 base.OnAwake();
 	 }
 	 //物体显示时执行
